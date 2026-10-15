@@ -4,6 +4,8 @@ import { Activity, ArrowRight, Bell, ChevronLeft, ChevronRight, Droplets, Menu, 
 import { metadataForPath, siteOrigin } from "./metadata.js";
 
 const ease = [0.22, 1, 0.36, 1];
+const basePath = import.meta.env.BASE_URL;
+const pageHref = path => `${basePath}${path.replace(/^\//, "")}`;
 const fade = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: .7, ease } } };
 const officialMedia = {
   homeFamily: "https://cdn.shopify.com/s/files/1/0919/4648/4099/files/Litter_box_catlink.png?v=1758872075",
@@ -78,12 +80,12 @@ function Navbar() {
   const links = [["Home", "/"], ["Technology", "/#technology"], ["Products", "/products"], ["How to choose", "/how-to-choose"], ["Reviews", "/reviews"], ["Catlink App", "/#app"]];
   return <header className={`nav-wrap ${scrolled ? "is-scrolled" : ""}`}>
     <nav aria-label="Main navigation">
-      <a href="/" aria-label="Catlink EU home"><Logo /></a>
-      <div className="desktop-links">{links.map(([label, href]) => <a key={href} href={href}>{label}</a>)}</div>
-      <a className="nav-buy" href="/products">Shop <span>all models</span></a>
+      <a href={pageHref("/")} aria-label="Catlink EU home"><Logo /></a>
+      <div className="desktop-links">{links.map(([label, href]) => <a key={href} href={pageHref(href)}>{label}</a>)}</div>
+      <a className="nav-buy" href={pageHref("/products")}>Shop <span>all models</span></a>
       <button ref={menuButtonRef} className="menu-toggle" aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen(!open)}>{open ? <X /> : <Menu />}</button>
     </nav>
-    <AnimatePresence>{open && <motion.nav id="mobile-navigation" aria-label="Mobile navigation" className="mobile-links" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>{links.map(([label, href]) => <a key={href} href={href} onClick={() => setOpen(false)}>{label}</a>)}</motion.nav>}</AnimatePresence>
+    <AnimatePresence>{open && <motion.nav id="mobile-navigation" aria-label="Mobile navigation" className="mobile-links" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>{links.map(([label, href]) => <a key={href} href={pageHref(href)} onClick={() => setOpen(false)}>{label}</a>)}</motion.nav>}</AnimatePresence>
   </header>;
 }
 
@@ -95,7 +97,7 @@ function Hero() {
       <motion.p variants={fade}>The Catlink family</motion.p>
       <motion.h1 variants={fade}>One connected home.<br /><span>Made for every cat.</span></motion.h1>
       <motion.h2 variants={fade}>Smart cleaning, feeding and hydration—thoughtfully connected in one app.</motion.h2>
-      <motion.div variants={fade} className="hero-actions"><a className="button" href="/products">Explore all products</a><a href="/how-to-choose">Find your fit <ChevronRight /></a></motion.div>
+      <motion.div variants={fade} className="hero-actions"><a className="button" href={pageHref("/products")}>Explore all products</a><a href={pageHref("/how-to-choose")}>Find your fit <ChevronRight /></a></motion.div>
     </motion.div>
     <div className="hero-note"><span>Litter boxes · Feeders · Water fountains</span><span>One Catlink app</span></div>
   </section>;
@@ -248,7 +250,7 @@ function ProductCatalog() {
       {sections.map(section => <section className="catalog-category" id={section.id} key={section.id}>
         <Reveal className="catalog-category-heading"><div><p className="kicker">{section.eyebrow}</p><h2>{section.name}</h2></div><p>{section.copy}</p><span>{String(section.items.length).padStart(2, "0")} models</span></Reveal>
         <div className="catalog-grid">{section.items.map((item, i) => <Reveal className="catalog-card" key={item.name} delay={(i % 3) * .05}>
-          <a className="catalog-card-link" href={`/products/${item.slug}`} aria-label={`View ${item.name}`}>
+          <a className="catalog-card-link" href={pageHref(`/products/${item.slug}`)} aria-label={`View ${item.name}`}>
             <div className="catalog-art"><img src={item.image} srcSet={officialImageSrcSet(item.image)} sizes="(max-width: 600px) calc(100vw - 20px), (max-width: 900px) 50vw, 33vw" alt={`${item.name} by Catlink`} loading="lazy" decoding="async" /><span>{item.badge}</span></div>
             <div className="catalog-copy"><small>{item.type}</small><h3>{item.name}</h3><p>{item.description}</p><ul>{item.features.map(f => <li key={f}>{f}</li>)}</ul><div className="catalog-price"><div>{item.was && <s>{item.was}</s>}<strong>{item.price}</strong></div><span>View <ArrowRight /></span></div></div>
           </a>
@@ -273,7 +275,7 @@ function ProductDetail({ product }) {
   };
   return <main id="main-content" className="detail-page">
     <section className="detail-hero">
-      <a className="detail-back" href="/products">← All products</a>
+      <a className="detail-back" href={pageHref("/products")}>← All products</a>
       <div className="detail-hero-grid">
         <motion.div className="detail-gallery" initial={{ opacity: 0, scale: .97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: .75, ease }}>
           <div className="detail-gallery-track" ref={galleryRef} onScroll={(event) => setActiveImage(Math.round(event.currentTarget.scrollLeft / event.currentTarget.clientWidth))}>
@@ -309,7 +311,7 @@ function ProductDetail({ product }) {
         return <Reveal className={`detail-spec ${isImportant ? "is-important" : ""}`} key={label}><div className="detail-spec-label"><span>{label}</span>{isImportant && <small>Key detail</small>}</div><strong>{value}</strong></Reveal>;
       })}</div>
     </section>
-    <section className="detail-related"><div><p className="kicker">Keep exploring</p><h2>More from Catlink.</h2></div><div className="related-grid">{related.map(item => <a href={`/products/${item.slug}`} key={item.slug}><div><img src={item.image} alt="" loading="lazy" /></div><span>{item.type}</span><h3>{item.name}</h3><p>{item.price} <ChevronRight /></p></a>)}</div></section>
+    <section className="detail-related"><div><p className="kicker">Keep exploring</p><h2>More from Catlink.</h2></div><div className="related-grid">{related.map(item => <a href={pageHref(`/products/${item.slug}`)} key={item.slug}><div><img src={item.image} alt="" loading="lazy" /></div><span>{item.type}</span><h3>{item.name}</h3><p>{item.price} <ChevronRight /></p></a>)}</div></section>
   </main>;
 }
 
@@ -415,7 +417,7 @@ function HowToChoose() {
         </fieldset>)}
         <button className="finder-reset" type="button" onClick={() => setFinderAnswers({ cats: null, shape: null, priority: null })} disabled={!answered}>Reset choices</button></div>
         <div className="finder-result" aria-live="polite">
-          {answered ? <><div className="finder-result-art"><img src={bestMatch.product.image} alt={`${bestMatch.product.name} self-cleaning litter box`} /><span>Best match</span></div><div className="finder-result-copy"><p>{answered === 3 ? "Your recommendation" : `${answered} of 3 choices selected`}</p><h3>{bestMatch.product.name}</h3><strong>{bestMatch.product.price}</strong><p>Best suited to your choices because it offers {bestMatch.reason}.</p><div className="finder-result-tags"><span>{bestMatch.shape === "open" ? "Open top" : "Enclosed"}</span><span>{bestMatch.multi ? "Multi-cat ready" : "Single-cat start"}</span><span>Up to {bestMatch.handsFree} days</span></div><a className="button" href={`/products/${bestMatch.slug}`}>View {bestMatch.product.name}</a></div></> : <div className="finder-empty"><span>01—03</span><h3>Choose any answer to begin.</h3><p>Your closest match will appear here, then become more precise with every choice.</p></div>}
+          {answered ? <><div className="finder-result-art"><img src={bestMatch.product.image} alt={`${bestMatch.product.name} self-cleaning litter box`} /><span>Best match</span></div><div className="finder-result-copy"><p>{answered === 3 ? "Your recommendation" : `${answered} of 3 choices selected`}</p><h3>{bestMatch.product.name}</h3><strong>{bestMatch.product.price}</strong><p>Best suited to your choices because it offers {bestMatch.reason}.</p><div className="finder-result-tags"><span>{bestMatch.shape === "open" ? "Open top" : "Enclosed"}</span><span>{bestMatch.multi ? "Multi-cat ready" : "Single-cat start"}</span><span>Up to {bestMatch.handsFree} days</span></div><a className="button" href={pageHref(`/products/${bestMatch.slug}`)}>View {bestMatch.product.name}</a></div></> : <div className="finder-empty"><span>01—03</span><h3>Choose any answer to begin.</h3><p>Your closest match will appear here, then become more precise with every choice.</p></div>}
         </div>
       </div>
     </section>
@@ -425,7 +427,7 @@ function HowToChoose() {
       <div className={`guide-models count-${group.products.length}`}>{group.products.map((choice, i) => {
         const product = guideProduct(choice.slug);
         return <Reveal className="guide-model" key={choice.slug} delay={(i % 3) * .05}>
-          <a href={`/products/${product.slug}`}>
+          <a href={pageHref(`/products/${product.slug}`)}>
             <div className="guide-model-image"><img src={product.image} alt={`${product.name} self-cleaning litter box`} loading="lazy" /><span>{product.badge}</span></div>
             <div className="guide-model-copy"><p>{product.type}</p><h3>{product.name}</h3><strong>{choice.bestFor}</strong><small>{choice.note}</small><div><span>{product.price}</span><b>View model <ChevronRight /></b></div></div>
           </a>
@@ -433,7 +435,7 @@ function HowToChoose() {
       })}</div>
     </section>)}</section>
 
-    <section className="guide-rule"><Reveal><p className="kicker">The simple rule</p><h2>Choose comfort first.<br /><span>Features second.</span></h2><p>If your cat will not comfortably enter the box, the technology does not matter. Start with open versus enclosed, then choose the monitoring and maintenance level that suits your home.</p><a className="button" href="/products">See every model</a></Reveal></section>
+    <section className="guide-rule"><Reveal><p className="kicker">The simple rule</p><h2>Choose comfort first.<br /><span>Features second.</span></h2><p>If your cat will not comfortably enter the box, the technology does not matter. Start with open versus enclosed, then choose the monitoring and maintenance level that suits your home.</p><a className="button" href={pageHref("/products")}>See every model</a></Reveal></section>
   </main>;
 }
 
@@ -485,7 +487,7 @@ function ReviewsPage() {
       <div className="reviews-mosaic">{customerPhotos.slice(1).map((photo, i) => <Reveal className={`reviews-photo photo-${i + 1}`} key={photo.src} delay={i * .05}><img src={photo.src} alt={photo.alt} loading="lazy" /><span>{photo.label}</span></Reveal>)}</div>
     </section>
 
-    <section className="reviews-takeaways"><Reveal><p className="kicker">The pattern</p><h2>What owners<br />mention most.</h2></Reveal><div><Reveal><span>01</span><h3>Less daily scooping</h3><p>The clearest benefit is time: many owners move from multiple scoops a day to one quick drawer change each week.</p></Reveal><Reveal><span>02</span><h3>Give cats time</h3><p>Curious cats may use it immediately. Cautious cats often do better with manual mode and their old box nearby during the transition.</p></Reveal><Reveal><span>03</span><h3>Useful, imperfect app</h3><p>Owners value weight and visit history, while some describe setup or the interface as the least polished part of the experience.</p></Reveal></div><a className="button" href="/how-to-choose">Find your model</a></section>
+    <section className="reviews-takeaways"><Reveal><p className="kicker">The pattern</p><h2>What owners<br />mention most.</h2></Reveal><div><Reveal><span>01</span><h3>Less daily scooping</h3><p>The clearest benefit is time: many owners move from multiple scoops a day to one quick drawer change each week.</p></Reveal><Reveal><span>02</span><h3>Give cats time</h3><p>Curious cats may use it immediately. Cautious cats often do better with manual mode and their old box nearby during the transition.</p></Reveal><Reveal><span>03</span><h3>Useful, imperfect app</h3><p>Owners value weight and visit history, while some describe setup or the interface as the least polished part of the experience.</p></Reveal></div><a className="button" href={pageHref("/how-to-choose")}>Find your model</a></section>
   </main>;
 }
 
@@ -505,8 +507,8 @@ function AppSection() {
 
 function Footer() {
   return <footer>
-    <div className="footer-top"><div><Logo /><p>An independent portfolio concept exploring smarter care for cats.</p></div><a className="button" href="/products">Explore the range</a></div>
-    <div className="footer-links"><div><b>Products</b><a href="/products#litter-boxes">Litter boxes</a><a href="/products#feeders">Smart feeders</a><a href="/products#water-fountains">Water fountains</a></div><div><b>Official support</b><a href="mailto:Support@catlinkeu.com">Contact Catlink EU</a><a href="https://catlinkeu.com" target="_blank" rel="noreferrer">Visit the official store</a></div><div><b>Concept pages</b><a href="/">Home</a><a href="/how-to-choose">How to choose</a><a href="/reviews">Reviews</a></div></div>
+    <div className="footer-top"><div><Logo /><p>An independent portfolio concept exploring smarter care for cats.</p></div><a className="button" href={pageHref("/products")}>Explore the range</a></div>
+    <div className="footer-links"><div><b>Products</b><a href={pageHref("/products#litter-boxes")}>Litter boxes</a><a href={pageHref("/products#feeders")}>Smart feeders</a><a href={pageHref("/products#water-fountains")}>Water fountains</a></div><div><b>Official support</b><a href="mailto:Support@catlinkeu.com">Contact Catlink EU</a><a href="https://catlinkeu.com" target="_blank" rel="noreferrer">Visit the official store</a></div><div><b>Concept pages</b><a href={pageHref("/")}>Home</a><a href={pageHref("/how-to-choose")}>How to choose</a><a href={pageHref("/reviews")}>Reviews</a></div></div>
     <p className="concept-disclaimer">Independent, non-commercial portfolio concept. Not affiliated with, endorsed by or owned by Catlink or Catlink EU. Product names, trademarks and official imagery belong to their respective owners.</p>
     <div className="copyright"><span>© {new Date().getFullYear()} Portfolio concept</span><span>Created for design and development demonstration.</span></div>
   </footer>;
@@ -517,12 +519,16 @@ function NotFoundPage() {
     <p className="kicker">404 · Page not found</p>
     <h1>This page wandered off.</h1>
     <p>The link may be outdated, or the page may not be part of this portfolio concept.</p>
-    <div><a className="button" href="/">Return home</a><a href="/products">Browse products <ChevronRight /></a></div>
+    <div><a className="button" href={pageHref("/")}>Return home</a><a href={pageHref("/products")}>Browse products <ChevronRight /></a></div>
   </main>;
 }
 
 export default function App() {
-  const path = window.location.pathname === "/" ? "/" : window.location.pathname.replace(/\/+$/, "");
+  const baseName = basePath.replace(/\/$/, "");
+  const pathname = baseName && window.location.pathname.startsWith(baseName)
+    ? window.location.pathname.slice(baseName.length) || "/"
+    : window.location.pathname;
+  const path = pathname === "/" ? "/" : pathname.replace(/\/+$/, "");
   useEffect(() => {
     setPageMetadata(path);
   }, [path]);
