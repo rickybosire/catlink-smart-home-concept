@@ -77,7 +77,11 @@ function Navbar() {
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [open]);
-  const links = [["Home", "/"], ["Technology", "/#technology"], ["Products", "/products"], ["How to choose", "/how-to-choose"], ["Reviews", "/reviews"], ["Catlink App", "/#app"]];
+  useEffect(() => {
+    document.body.classList.toggle("menu-open", open);
+    return () => document.body.classList.remove("menu-open");
+  }, [open]);
+  const links = [["Home", "/"], ["Products", "/products"], ["How to choose", "/how-to-choose"], ["Reviews", "/reviews"], ["App", "/#app"]];
   return <header className={`nav-wrap ${scrolled ? "is-scrolled" : ""}`}>
     <nav aria-label="Main navigation">
       <a href={pageHref("/")} aria-label="Catlink EU home"><Logo /></a>
@@ -105,8 +109,8 @@ function Hero() {
 
 function Intro() {
   return <section id="pro-x" className="intro">
-    <Reveal><p className="kicker">Meet Pro-X</p><h2>It cleans itself.<br /><span>And looks after them.</span></h2><p className="intro-copy">Pro-X quietly separates waste after every visit, recognises each cat by weight and turns everyday litter-box habits into useful health signals.</p></Reveal>
-    <div className="facts"><Reveal delay={.05}><strong>99%</strong><span>less daily scooping</span></Reveal><Reveal delay={.12}><strong>4 cats</strong><span>individual profiles</span></Reveal><Reveal delay={.19}><strong>24/7</strong><span>health monitoring</span></Reveal></div>
+    <Reveal><p className="kicker">A calmer routine</p><h2>Everyday cat care.<br /><span>Connected in one place.</span></h2><p className="intro-copy">Catlink brings cleaning, feeding and hydration into one simple ecosystem, helping every cat keep a comfortable routine while owners spend less time on daily maintenance.</p></Reveal>
+    <div className="facts"><Reveal delay={.05}><strong>3</strong><span>connected care categories</span></Reveal><Reveal delay={.12}><strong>1 app</strong><span>one clear daily overview</span></Reveal><Reveal delay={.19}><strong>24/7</strong><span>routine monitoring</span></Reveal></div>
   </section>;
 }
 
@@ -237,11 +241,36 @@ const productEditorial = {
   "w03-wireless": { bestFor: "placing fresh water wherever a cat naturally prefers to drink", overview: "A 5000mAh battery removes the need for a nearby outlet, while five operating modes adapt flow to different routines and times of day. The 2.3L reservoir and quiet 30 dB operation suit bedrooms, hallways and calm living spaces.", important: ["Battery", "Noise"] },
 };
 
+const extras = [
+  { category: "Accessories", name: "Open-X Time-Saver Pack", type: "3, 6 or 12-month care kit", price: "from €82,12", image: "https://catlinkeu.com/cdn/shop/files/catlink-eutime-saver-accessories-pack-3612-month-for-open-x-7154217.png?v=1789550179&width=1080", officialUrl: "https://catlinkeu.com/products/time-saver-accessories-pack-3-6-12-month-for-open-x", description: "Waste bags, litter mats and odour care sized for Open-X and Open-X Lite.", features: ["Multiple pack sizes", "Official consumables", "Open-X compatible"] },
+  { category: "Accessories", name: "Open-X Waste Bags", type: "Drawstring waste bags", price: "from €12,99", image: "https://catlinkeu.com/cdn/shop/files/catlink-eucatlink-open-x-waste-bags-1359916.png?v=1766331153&width=1080", officialUrl: "https://catlinkeu.com/products/open-x-trash-bag", description: "Reinforced drawstring bags designed for the Open-X 12L waste drawer.", features: ["Two rolls per pack", "20 bags per roll", "Easy-seal drawstrings"] },
+  { category: "Accessories", name: "Baymax Waste Bags", type: "Odour-lock waste bags", price: "from €12,99", image: "https://catlinkeu.com/cdn/shop/files/catlink-eucatlink-baymax-waste-bags-for-baymax-litter-box-2-pack-369996.jpg?v=1747015889&width=1080", officialUrl: "https://catlinkeu.com/products/catlink-waste-bags-for-baymax-litter-box-2-pack", description: "Durable replacement bags made for the Baymax 13L waste container.", features: ["Two rolls per pack", "20 bags per roll", "Baymax fit"] },
+  { category: "Accessories", name: "Pro-X Carbon Filter", type: "Replacement odour filter", price: "from €23,99", image: "https://catlinkeu.com/cdn/shop/files/catlink-eucatlink-pro-x-young-activated-carbon-filter-box-1-pcs-973435.png?v=1748143803&width=1080", officialUrl: "https://catlinkeu.com/products/catlink-activated-carbon-filter-box-1-pc", description: "An easy-fit activated carbon filter for Pro-X and Young litter boxes.", features: ["Odour control", "Easy installation", "Pro-X and Young"] },
+  { category: "Bundles", name: "Clean & Feed Complete Set", type: "Litter box, feeder and fountain", price: "from €383,99", image: "https://catlinkeu.com/cdn/shop/files/catlink-eulitter-box-feeder-water-fountain-complete-set-5062047.png?v=1767822931&width=1080", officialUrl: "https://catlinkeu.com/products/litter-box-feeder-water-fountain-complete-set", description: "Build a connected cleaning, feeding and hydration setup around one Catlink app.", features: ["Three care categories", "Configurable models", "One connected app"] },
+  { category: "Bundles", name: "Feed & Hydrate Duo", type: "Two-device bundle", price: "from €147,42", image: "https://catlinkeu.com/cdn/shop/files/catlink-eubundle-catlink-feeder-catlink-feeder-or-drinker-1567546.png?v=1767242591&width=1080", officialUrl: "https://catlinkeu.com/products/bundle-catlink-automatic-feeder", description: "Pair two feeders or combine a feeder and water fountain for everyday care.", features: ["Mix and match", "App connected", "Multi-pet friendly"] },
+  { category: "Bundles", name: "Two Litter Box Bundle", type: "Multi-box household set", price: "from €737,18", image: "https://catlinkeu.com/cdn/shop/files/catlink-eubundle-package-catlink-litter-box-2738463.png?v=1765999839&width=1080", officialUrl: "https://catlinkeu.com/products/bundle-catlink-litter-box", description: "Choose two compatible self-cleaning boxes with matching care accessories.", features: ["Two-box setup", "Choice of models", "Accessories included"] },
+];
+
+function StockStatus({ officialUrl }) {
+  const [status, setStatus] = useState("checking");
+  useEffect(() => {
+    const handle = new URL(officialUrl).pathname.split("/products/")[1]?.split("/")[0];
+    if (!handle) return setStatus("unknown");
+    fetch(`https://catlinkeu.com/products/${handle}.js`)
+      .then(response => response.ok ? response.json() : Promise.reject())
+      .then(product => setStatus(product.available || product.variants?.some(variant => variant.available) ? "available" : "sold-out"))
+      .catch(() => setStatus("unknown"));
+  }, [officialUrl]);
+  return <span className={`stock-status ${status}`}>{status === "available" ? "In stock at Catlink EU" : status === "sold-out" ? "Currently sold out" : status === "checking" ? "Checking live stock…" : "Check stock at Catlink EU"}</span>;
+}
+
 function ProductCatalog() {
   const sections = [
     { id: "litter-boxes", name: "Litter boxes", eyebrow: "Automatic cleaning", copy: "Nine smart litter boxes for different cats, spaces and levels of automation.", items: catalog.filter(item => !item.category) },
     { id: "feeders", name: "Smart feeders", eyebrow: "Personalised meals", copy: "RFID and camera-enabled feeding for portions, schedules and multi-cat routines.", items: catalog.filter(item => item.category === "Feeders") },
     { id: "water-fountains", name: "Water fountains", eyebrow: "Connected hydration", copy: "Filtered water, intake monitoring and reminders through the same Catlink app.", items: catalog.filter(item => item.category === "Water fountains") },
+    { id: "accessories", name: "Accessories", eyebrow: "Keep care running", copy: "Official consumables and replacement parts for the most-used Catlink models.", items: extras.filter(item => item.category === "Accessories"), external: true },
+    { id: "bundles", name: "Bundles", eyebrow: "Connected sets", copy: "Multi-device combinations for cleaning, feeding and hydration.", items: extras.filter(item => item.category === "Bundles"), external: true },
   ];
   return <main id="main-content" className="catalog-page">
     <section className="catalog-hero"><div><p className="kicker">The complete Catlink range</p><h1>One app.<br /><span>Every routine.</span></h1><p>Smart litter boxes, personalised feeders and filtered fountains designed to work together.</p><nav className="catalog-jump" aria-label="Product categories">{sections.map(section => <a href={`#${section.id}`} key={section.id}>{section.name}</a>)}</nav></div><img src={officialMedia.catalogFamily} srcSet={officialImageSrcSet(officialMedia.catalogFamily)} sizes="(max-width: 900px) 90vw, 55vw" alt="Catlink smart litter box, feeder and water fountain" fetchPriority="high" decoding="async" /></section>
@@ -250,9 +279,9 @@ function ProductCatalog() {
       {sections.map(section => <section className="catalog-category" id={section.id} key={section.id}>
         <Reveal className="catalog-category-heading"><div><p className="kicker">{section.eyebrow}</p><h2>{section.name}</h2></div><p>{section.copy}</p><span>{String(section.items.length).padStart(2, "0")} models</span></Reveal>
         <div className="catalog-grid">{section.items.map((item, i) => <Reveal className="catalog-card" key={item.name} delay={(i % 3) * .05}>
-          <a className="catalog-card-link" href={pageHref(`/products/${item.slug}`)} aria-label={`View ${item.name}`}>
+          <a className="catalog-card-link" href={section.external ? item.officialUrl : pageHref(`/products/${item.slug}`)} target={section.external ? "_blank" : undefined} rel={section.external ? "noreferrer" : undefined} aria-label={`View ${item.name}`}>
             <div className="catalog-art"><img src={item.image} srcSet={officialImageSrcSet(item.image)} sizes="(max-width: 600px) calc(100vw - 20px), (max-width: 900px) 50vw, 33vw" alt={`${item.name} by Catlink`} loading="lazy" decoding="async" /><span>{item.badge}</span></div>
-            <div className="catalog-copy"><small>{item.type}</small><h3>{item.name}</h3><p>{item.description}</p><ul>{item.features.map(f => <li key={f}>{f}</li>)}</ul><div className="catalog-price"><div>{item.was && <s>{item.was}</s>}<strong>{item.price}</strong></div><span>View <ArrowRight /></span></div></div>
+            <div className="catalog-copy"><small>{item.type}</small><h3>{item.name}</h3><p>{item.description}</p><StockStatus officialUrl={item.officialUrl} /><ul>{item.features.map(f => <li key={f}>{f}</li>)}</ul><div className="catalog-price"><div>{item.was && <s>{item.was}</s>}<strong>{item.price}</strong></div><span>View <ArrowRight /></span></div></div>
           </a>
         </Reveal>)}</div>
       </section>)}
@@ -296,7 +325,7 @@ function ProductDetail({ product }) {
           <motion.p variants={fade}>{product.description}</motion.p>
           <motion.p className="detail-best-for" variants={fade}><strong>Best for</strong>{editorial.bestFor}</motion.p>
           <motion.div className="detail-buy" variants={fade}><div><s>{product.was}</s><strong>{product.price}</strong><small>EU tax included</small></div><a className="button" href={product.officialUrl} target="_blank" rel="noreferrer">View official listing</a></motion.div>
-          <motion.div className="detail-assurances" variants={fade}><span>2-year warranty</span><span>30-day returns</span><span>Ships from Germany</span></motion.div>
+          <motion.div className="detail-assurances" variants={fade}><StockStatus officialUrl={product.officialUrl} /><span>2-year warranty</span><span>30-day returns</span><span>Ships from Germany</span></motion.div>
         </motion.div>
       </div>
     </section>
@@ -391,6 +420,23 @@ function HowToChoose() {
   const answered = Object.values(finderAnswers).filter(Boolean).length;
   const finderResults = finderModels.map(profile => ({ ...profile, product: guideProduct(profile.slug), score: rankFinderModel(profile, finderAnswers) })).sort((a, b) => b.score - a.score || a.price - b.price);
   const bestMatch = finderResults[0];
+  const isCompatible = (questionKey, value) => {
+    if (questionKey === "priority" && finderAnswers.shape === "open") return false;
+    const next = { ...finderAnswers, [questionKey]: value };
+    return finderModels.some(model => {
+      if (next.cats === "multi" && !model.multi) return false;
+      if (next.shape && next.shape !== "unsure" && model.shape !== next.shape) return false;
+      if (next.priority === "camera" && !model.camera) return false;
+      if (next.priority === "easy" && !model.easyEntry) return false;
+      if (next.priority === "budget" && model.price > 350) return false;
+      return true;
+    });
+  };
+  const chooseAnswer = (key, value) => setFinderAnswers(current => {
+    const next = { ...current, [key]: current[key] === value ? null : value };
+    if (key === "shape" && value === "open") next.priority = null;
+    return next;
+  });
   return <main id="main-content" className="guide-page">
     <section className="guide-hero">
       <motion.div initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: .1 } } }}>
@@ -413,7 +459,7 @@ function HowToChoose() {
         <div className="finder-controls">{finderQuestions.map((question, index) => <fieldset key={question.key}>
           <legend><span>0{index + 1}</span>{question.label}</legend>
           <p className="finder-help">{question.help}</p>
-          <div>{question.options.map(([value, label]) => <button type="button" key={value} aria-pressed={finderAnswers[question.key] === value} onClick={() => setFinderAnswers(current => ({ ...current, [question.key]: current[question.key] === value ? null : value }))}>{label}</button>)}</div>
+          <div>{question.options.map(([value, label]) => { const disabled = !isCompatible(question.key, value); return <button type="button" key={value} disabled={disabled} aria-pressed={finderAnswers[question.key] === value} onClick={() => chooseAnswer(question.key, value)}>{label}</button>; })}</div>
         </fieldset>)}
         <button className="finder-reset" type="button" onClick={() => setFinderAnswers({ cats: null, shape: null, priority: null })} disabled={!answered}>Reset choices</button></div>
         <div className="finder-result" aria-live="polite">
@@ -440,12 +486,12 @@ function HowToChoose() {
 }
 
 const customerReviews = [
-  { name: "Athina D.", place: "Greece", rating: 5, source: "Trustpilot", model: "Baymax", text: "Athina says Baymax made daily care noticeably easier, her cat accepted it, and her experience with customer service was excellent." },
-  { name: "Nicole", place: "Verified purchase", rating: 5, source: "Walmart", model: "CATLINK automatic litter box", text: "With four cats at home, Nicole found setup straightforward, liked the clean design and ultimately bought three units." },
-  { name: "Jess", place: "Verified purchase", rating: 5, source: "Walmart", model: "CATLINK automatic litter box", text: "The cat who had rejected litter boxes for years was the first to try it. All five cats now use the new box." },
-  { name: "Ashlee", place: "Verified purchase", rating: 5, source: "Walmart", model: "CATLINK automatic litter box", text: "Ashlee went from scooping several times a day for two cats to emptying the drawer roughly once a week." },
-  { name: "Rachael", place: "Verified purchase", rating: 5, source: "Walmart", model: "CATLINK automatic litter box", text: "Rachael praised the quiet cleaning, odour control, safety sensors and weight tracking, while wishing for a taller front guard." },
-  { name: "albform", place: "Verified purchase", rating: 4, source: "Walmart", model: "CATLINK automatic litter box", text: "A strong time-saver with a roomy, odour-contained drawer. Smaller clumps occasionally still need to be removed by hand." },
+  { name: "Athina D.", place: "Greece", rating: 5, source: "Trustpilot", model: "Baymax", text: "Baymax has made my daily routine noticeably easier. My cat accepted it, and the customer service experience was excellent." },
+  { name: "Nicole", place: "Verified purchase", rating: 5, source: "Walmart", model: "CATLINK automatic litter box", text: "With four cats at home, I found setup straightforward and loved the clean design. I ultimately bought three units." },
+  { name: "Jess", place: "Verified purchase", rating: 5, source: "Walmart", model: "CATLINK automatic litter box", text: "The cat who had rejected litter boxes for years was the first to try it. All five of my cats now use the new box." },
+  { name: "Ashlee", place: "Verified purchase", rating: 5, source: "Walmart", model: "CATLINK automatic litter box", text: "I went from scooping several times a day for two cats to emptying the drawer roughly once a week." },
+  { name: "Rachael", place: "Verified purchase", rating: 5, source: "Walmart", model: "CATLINK automatic litter box", text: "I love the quiet cleaning, odour control, safety sensors and weight tracking. I only wish the front guard were taller." },
+  { name: "albform", place: "Verified purchase", rating: 4, source: "Walmart", model: "CATLINK automatic litter box", text: "It is a strong time-saver with a roomy, odour-contained drawer. I occasionally still remove smaller clumps by hand." },
 ];
 
 const customerPhotos = [
@@ -470,11 +516,11 @@ function ReviewsPage() {
 
     <section className="reviews-feature">
       <Reveal className="reviews-feature-photo"><img src={featurePhoto.src} alt={featurePhoto.alt} loading="lazy" /><span>Verified buyer photo · Catlink EU</span></Reveal>
-      <Reveal className="reviews-feature-copy"><p className="kicker">Four cats · Two boxes</p><div className="review-stars" aria-label="Long-term customer review">★★★★★</div><blockquote>“Four cats in the house—and no more daily scooping.”</blockquote><p>PetMomma documented a gradual two-month transition to two Catlink boxes. Her cats needed patience, but the consistently clean litter, low odour and optional stairs helped every cat adjust.</p><p className="reviews-balance">Her honest caveats: the app takes time to learn, the stair should feel standard, and the system is a meaningful investment.</p><a href="https://www.petmomma.co/2022/12/29/worth-the-wait-catlink-litter-box-review/" target="_blank" rel="noreferrer">Read the independent review <ChevronRight /></a></Reveal>
+      <Reveal className="reviews-feature-copy"><p className="kicker">Four cats · Two boxes</p><div className="review-stars" aria-label="Long-term customer review">★★★★★</div><blockquote>“Four cats in the house—and no more daily scooping.”</blockquote><p>We introduced two Catlink boxes gradually over two months. Our cats needed patience, but consistently clean litter, low odour and the optional stairs helped every cat adjust.</p><p className="reviews-balance">Our honest caveats: the app takes time to learn, the stair should feel standard, and the system is a meaningful investment.</p><a href="https://www.petmomma.co/2022/12/29/worth-the-wait-catlink-litter-box-review/" target="_blank" rel="noreferrer">Read the independent review <ChevronRight /></a></Reveal>
     </section>
 
     <section className="reviews-grid-section">
-      <Reveal className="reviews-heading"><p className="kicker">In their words</p><h2>The everyday<br />difference.</h2><p>Feedback is lightly paraphrased for clarity and length. Ratings, names and purchase labels reflect the public source.</p></Reveal>
+      <Reveal className="reviews-heading"><p className="kicker">In their words</p><h2>The everyday<br />difference.</h2><p>Feedback is lightly edited into first person for clarity and length. Ratings, names and purchase labels reflect the public source.</p></Reveal>
       <div className="reviews-grid">{customerReviews.map((review, i) => <Reveal className="review-card" key={review.name} delay={(i % 3) * .05}>
         <div className="review-card-top"><div className="review-stars" aria-label={`${review.rating} out of 5 stars`}>{"★".repeat(review.rating)}{"☆".repeat(5-review.rating)}</div><span>{review.source}</span></div>
         <p>{review.text}</p>
@@ -543,7 +589,7 @@ export default function App() {
     : path === "/products"
       ? <ProductCatalog />
     : path === "/"
-      ? <main id="main-content"><Hero /><Technology /><Intro /><AppSection /></main>
+      ? <main id="main-content"><Hero /><Intro /><AppSection /></main>
       : <NotFoundPage />;
   return <MotionConfig reducedMotion="user"><a className="skip-link" href="#main-content">Skip to main content</a><Navbar />{content}<Footer /></MotionConfig>;
 }
