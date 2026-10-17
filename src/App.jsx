@@ -520,11 +520,11 @@ function ReviewsPage() {
     </section>
 
     <section className="reviews-grid-section">
-      <Reveal className="reviews-heading"><p className="kicker">In their words</p><h2>The everyday<br />difference.</h2><p>Feedback is lightly edited into first person for clarity and length. Ratings, names and purchase labels reflect the public source.</p></Reveal>
+      <Reveal className="reviews-heading"><p className="kicker">In their words</p><h2>The everyday<br />difference.</h2><p>Feedback is lightly edited into first person for clarity and length. Ratings and names reflect the public source.</p></Reveal>
       <div className="reviews-grid">{customerReviews.map((review, i) => <Reveal className="review-card" key={review.name} delay={(i % 3) * .05}>
         <div className="review-card-top"><div className="review-stars" aria-label={`${review.rating} out of 5 stars`}>{"★".repeat(review.rating)}{"☆".repeat(5-review.rating)}</div><span>{review.source}</span></div>
         <p>{review.text}</p>
-        <div className="review-person"><b>{review.name}</b><span>{review.place}</span><small>{review.model}</small></div>
+        <div className="review-person"><b>{review.name}</b><small>{review.model}</small></div>
       </Reveal>)}</div>
     </section>
 
@@ -552,6 +552,12 @@ function AppSection() {
 }
 
 function AppPage() {
+  const appScreens = [
+    { src: "https://catlinkeu.com/cdn/shop/t/3/assets/app_cat_warning.png?v=176912283247030621731759229688", alt: "Catlink app warning screen showing a health alert for a cat" },
+    { src: "https://catlinkeu.com/cdn/shop/t/3/assets/app_health_trend.png?v=163429243888260671671760456652", alt: "Catlink app health trend screen with weight and activity charts" },
+    { src: "https://catlinkeu.com/cdn/shop/t/3/assets/app_litter_box_usage.png?v=40702209438526604231759229698", alt: "Catlink app litter box usage screen with daily visit data" },
+    { src: "https://catlinkeu.com/cdn/shop/t/3/assets/app_attention_needed.png?v=7974297517464134531759229664", alt: "Catlink app attention screen showing device and care reminders" },
+  ];
   const appFeatures = [
     { icon: Activity, title: "See daily patterns", text: "Review litter-box visits, meals, water intake and weight changes in one chronological view." },
     { icon: Bell, title: "Get useful alerts", text: "Receive maintenance reminders and notifications when a connected device or routine needs attention." },
@@ -569,7 +575,7 @@ function AppPage() {
           <a href="https://play.google.com/store/apps/details?id=com.catlink.app" target="_blank" rel="noreferrer"><b>Get it on</b><strong>Google Play</strong></a>
         </motion.div>
       </motion.div>
-      <motion.div className="app-page-phone phone" initial={{ opacity: 0, y: 28, rotate: 3 }} animate={{ opacity: 1, y: 0, rotate: 3 }} transition={{ duration: .8, ease }}><div className="phone-screen"><div className="phone-top"><span>9:41</span><i /></div><p>Good morning</p><h3>Your cats are doing well.</h3><div className="score"><b>94</b><span>Health score<br /><em>Stable this week</em></span></div><small>Today</small>{notices.map(({ icon: Icon, title, copy }) => <div className="notice" key={title}><i><Icon /></i><span><b>{title}</b><small>{copy}</small></span></div>)}</div></motion.div>
+      <motion.div className="app-screen-gallery" initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .8, ease }}>{appScreens.map((screen, index) => <figure className={`app-screen screen-${index + 1}`} key={screen.src}><img src={screen.src} alt={screen.alt} decoding="async" /><figcaption>{["Health alerts", "Health trends", "Usage history", "Care reminders"][index]}</figcaption></figure>)}</motion.div>
     </section>
 
     <section className="app-feature-section">
