@@ -54,6 +54,10 @@ export const routeMetadata = {
     title: "Customer Reviews — Catlink EU Concept",
     description: "Read lightly edited public Catlink customer experiences and see verified-buyer product photographs in real homes.",
   },
+  "/app": {
+    title: "Catlink App — Connected Cat Care Concept",
+    description: "Explore how the Catlink app brings compatible litter boxes, feeders and water fountains into one connected care overview.",
+  },
   ...Object.fromEntries(Object.entries(productNames).map(([slug, name]) => [`/products/${slug}`, {
     title: `${name} — Catlink EU Concept`,
     description: productDescriptions[slug],

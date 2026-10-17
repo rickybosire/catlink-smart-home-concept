@@ -81,7 +81,7 @@ function Navbar() {
     document.body.classList.toggle("menu-open", open);
     return () => document.body.classList.remove("menu-open");
   }, [open]);
-  const links = [["Home", "/"], ["Products", "/products"], ["How to choose", "/how-to-choose"], ["Reviews", "/reviews"], ["App", "/#app"]];
+  const links = [["Home", "/"], ["Products", "/products"], ["How to choose", "/how-to-choose"], ["Reviews", "/reviews"], ["App", "/app"]];
   return <header className={`nav-wrap ${scrolled ? "is-scrolled" : ""}`}>
     <nav aria-label="Main navigation">
       <a href={pageHref("/")} aria-label="Catlink EU home"><Logo /></a>
@@ -546,15 +546,50 @@ const notices = [
 function AppSection() {
   return <section id="app" className="app-section">
     <div className="app-glow" />
-    <Reveal className="app-copy"><p className="kicker">Catlink app</p><h2>Their routine.<br /><span>Right in your hand.</span></h2><p>One clear timeline for meals, water, weight and litter-box habits. No spreadsheets. No second-guessing.</p><div className="app-points"><span><ShieldCheck /> Private by design</span><span><Sparkles /> Insights that stay useful</span></div></Reveal>
+    <Reveal className="app-copy"><p className="kicker">Catlink app</p><h2>Their routine.<br /><span>Right in your hand.</span></h2><p>One clear timeline for meals, water, weight and litter-box habits. No spreadsheets. No second-guessing.</p><div className="app-points"><span><ShieldCheck /> One connected dashboard</span><span><Sparkles /> Insights that stay useful</span></div><a className="button app-learn" href={pageHref("/app")}>Explore the Catlink app</a></Reveal>
     <Reveal className="phone"><div className="phone-screen"><div className="phone-top"><span>9:41</span><i /></div><p>Good morning</p><h3>Your cats are doing well.</h3><div className="score"><b>94</b><span>Health score<br /><em>Stable this week</em></span></div><small>Today</small>{notices.map(({ icon: Icon, title, copy }) => <div className="notice" key={title}><i><Icon /></i><span><b>{title}</b><small>{copy}</small></span></div>)}</div></Reveal>
   </section>;
+}
+
+function AppPage() {
+  const appFeatures = [
+    { icon: Activity, title: "See daily patterns", text: "Review litter-box visits, meals, water intake and weight changes in one chronological view." },
+    { icon: Bell, title: "Get useful alerts", text: "Receive maintenance reminders and notifications when a connected device or routine needs attention." },
+    { icon: ScanFace, title: "Follow each cat", text: "Compatible devices separate activity into individual profiles for clearer multi-cat monitoring." },
+    { icon: Radar, title: "Control devices remotely", text: "Check device status, adjust supported schedules and manage everyday settings away from home." },
+  ];
+  return <main id="main-content" className="app-page">
+    <section className="app-page-hero">
+      <motion.div className="app-page-copy" initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: .1 } } }}>
+        <motion.p className="kicker" variants={fade}>The Catlink app</motion.p>
+        <motion.h1 variants={fade}>Every routine.<br /><span>One calm overview.</span></motion.h1>
+        <motion.p variants={fade}>Connect compatible Catlink litter boxes, feeders and fountains to see daily activity, device status and care reminders from one place.</motion.p>
+        <motion.div className="app-store-links" variants={fade}>
+          <a href="https://apps.apple.com/fi/app/catlink/id1407845134" target="_blank" rel="noreferrer"><b>Download on the</b><strong>App Store</strong></a>
+          <a href="https://play.google.com/store/apps/details?id=com.catlink.app" target="_blank" rel="noreferrer"><b>Get it on</b><strong>Google Play</strong></a>
+        </motion.div>
+      </motion.div>
+      <motion.div className="app-page-phone phone" initial={{ opacity: 0, y: 28, rotate: 3 }} animate={{ opacity: 1, y: 0, rotate: 3 }} transition={{ duration: .8, ease }}><div className="phone-screen"><div className="phone-top"><span>9:41</span><i /></div><p>Good morning</p><h3>Your cats are doing well.</h3><div className="score"><b>94</b><span>Health score<br /><em>Stable this week</em></span></div><small>Today</small>{notices.map(({ icon: Icon, title, copy }) => <div className="notice" key={title}><i><Icon /></i><span><b>{title}</b><small>{copy}</small></span></div>)}</div></motion.div>
+    </section>
+
+    <section className="app-feature-section">
+      <Reveal className="app-feature-heading"><p className="kicker">A clearer daily picture</p><h2>Useful information.<br /><span>Without the noise.</span></h2><p>The app turns activity from compatible Catlink devices into a simpler view of what happened, which cat was involved and what may need attention next.</p></Reveal>
+      <div className="app-feature-grid">{appFeatures.map(({ icon: Icon, title, text }, index) => <Reveal className="app-feature-card" key={title} delay={index * .05}><Icon /><span>0{index + 1}</span><h3>{title}</h3><p>{text}</p></Reveal>)}</div>
+    </section>
+
+    <section className="app-connected-section">
+      <Reveal><p className="kicker">One connected home</p><h2>Cleaning, feeding<br /><span>and hydration.</span></h2><p>Bring supported devices together so everyday care is easier to review without moving between separate apps or disconnected histories.</p></Reveal>
+      <div className="app-connected-list"><Reveal><Droplets /><b>Water</b><span>Hydration activity and refill reminders</span></Reveal><Reveal><Sparkles /><b>Cleaning</b><span>Visits, weight trends and waste-drawer status</span></Reveal><Reveal><Activity /><b>Meals</b><span>Schedules, portions and feeding records</span></Reveal></div>
+    </section>
+
+    <section className="app-page-cta"><Reveal><p className="kicker">Available for iPhone and Android</p><h2>Keep their routine<br />close at hand.</h2><div className="app-store-links"><a href="https://apps.apple.com/fi/app/catlink/id1407845134" target="_blank" rel="noreferrer"><b>Download on the</b><strong>App Store</strong></a><a href="https://play.google.com/store/apps/details?id=com.catlink.app" target="_blank" rel="noreferrer"><b>Get it on</b><strong>Google Play</strong></a></div></Reveal></section>
+  </main>;
 }
 
 function Footer() {
   return <footer>
     <div className="footer-top"><div><Logo /><p>An independent portfolio concept exploring smarter care for cats.</p></div><a className="button" href={pageHref("/products")}>Explore the range</a></div>
-    <div className="footer-links"><div><b>Products</b><a href={pageHref("/products#litter-boxes")}>Litter boxes</a><a href={pageHref("/products#feeders")}>Smart feeders</a><a href={pageHref("/products#water-fountains")}>Water fountains</a></div><div><b>Official support</b><a href="mailto:Support@catlinkeu.com">Contact Catlink EU</a><a href="https://catlinkeu.com" target="_blank" rel="noreferrer">Visit the official store</a></div><div><b>Concept pages</b><a href={pageHref("/")}>Home</a><a href={pageHref("/how-to-choose")}>How to choose</a><a href={pageHref("/reviews")}>Reviews</a></div></div>
+    <div className="footer-links"><div><b>Products</b><a href={pageHref("/products#litter-boxes")}>Litter boxes</a><a href={pageHref("/products#feeders")}>Smart feeders</a><a href={pageHref("/products#water-fountains")}>Water fountains</a></div><div><b>Official support</b><a href="mailto:Support@catlinkeu.com">Contact Catlink EU</a><a href="https://catlinkeu.com" target="_blank" rel="noreferrer">Visit the official store</a></div><div><b>Concept pages</b><a href={pageHref("/")}>Home</a><a href={pageHref("/how-to-choose")}>How to choose</a><a href={pageHref("/reviews")}>Reviews</a><a href={pageHref("/app")}>Catlink app</a></div></div>
     <p className="concept-disclaimer">Independent, non-commercial portfolio concept. Not affiliated with, endorsed by or owned by Catlink or Catlink EU. Product names, trademarks and official imagery belong to their respective owners.</p>
     <div className="copyright"><span>© {new Date().getFullYear()} Portfolio concept</span><span>Created for design and development demonstration.</span></div>
   </footer>;
@@ -586,6 +621,8 @@ export default function App() {
       ? <ReviewsPage />
     : path === "/how-to-choose"
       ? <HowToChoose />
+    : path === "/app"
+      ? <AppPage />
     : path === "/products"
       ? <ProductCatalog />
     : path === "/"
