@@ -552,17 +552,20 @@ function AppSection() {
 }
 
 function AppPage() {
+  const [flippedFeature, setFlippedFeature] = useState(null);
   const appScreens = [
-    { src: "https://catlinkeu.com/cdn/shop/t/3/assets/app_cat_warning.png?v=176912283247030621731759229688", alt: "Catlink app warning screen showing a health alert for a cat" },
-    { src: "https://catlinkeu.com/cdn/shop/t/3/assets/app_health_trend.png?v=163429243888260671671760456652", alt: "Catlink app health trend screen with weight and activity charts" },
-    { src: "https://catlinkeu.com/cdn/shop/t/3/assets/app_litter_box_usage.png?v=40702209438526604231759229698", alt: "Catlink app litter box usage screen with daily visit data" },
-    { src: "https://catlinkeu.com/cdn/shop/t/3/assets/app_attention_needed.png?v=7974297517464134531759229664", alt: "Catlink app attention screen showing device and care reminders" },
+    { src: "https://play-lh.googleusercontent.com/P4-tWArMDaIQHfHNV9xSLTW3-P8getBUd3bjLizKReOVB0OSd-WZJ3qMYRwyGT9wPJZmFeNUL_QGgw34qja_=w832-h468", alt: "Catlink app home screen showing connected litter boxes, feeders and fountains", label: "Connected home" },
+    { src: "https://play-lh.googleusercontent.com/EUZJVKua1j00ClxrbZjmuUiYAxAL3HKCxiWaFLrlnXa8QG0dVg9fRjRZIC4TnvKR9lsk4qNZdff6tsI_BTJg=w832-h468", alt: "Catlink app device settings for a connected litter box", label: "Device controls" },
+    { src: "https://play-lh.googleusercontent.com/vx_M8g3jnFIpsS5TLIlk6tprXJXjAiQm8E5aZlC2en7TrvTpII7mty8NqHc2oHx3QGg8cwnhRHjjx_Jcb7VvQQ=w832-h468", alt: "Catlink app device dashboard with cleaning controls", label: "Cleaning status" },
+    { src: "https://play-lh.googleusercontent.com/50aW_J8weLQUn6c_OhMMfUlePqGWnNQyhLdPb-nwBgSwT3R1eOnbAR_afid2wCp_tMCG9QUzIOY4XythQom31Ig=w832-h468", alt: "Catlink app cat profile with weight, toileting and feeding data", label: "Cat profiles" },
+    { src: "https://play-lh.googleusercontent.com/3sO7TnjbK2upFPW4FpgygaQfDN95uTBTAPe3xuG5UvSDBvLkGl4m-b0bVRC9nnE0okShQgaMKBpjkQVBFli-=w832-h468", alt: "Catlink app health report with weight trend chart", label: "Health reports" },
+    { src: "https://play-lh.googleusercontent.com/nw6AN62aNE6AFWbOKdZxgbTQrZGTOmRMDqZb-qku0D8he8dXTbB560m0gytqyZke8L3FTDPrsUkrGMzW4avdHA=w832-h468", alt: "Catlink app graphs showing toileting and feeding trends", label: "Daily trends" },
   ];
   const appFeatures = [
-    { icon: Activity, title: "See daily patterns", text: "Review litter-box visits, meals, water intake and weight changes in one chronological view." },
-    { icon: Bell, title: "Get useful alerts", text: "Receive maintenance reminders and notifications when a connected device or routine needs attention." },
-    { icon: ScanFace, title: "Follow each cat", text: "Compatible devices separate activity into individual profiles for clearer multi-cat monitoring." },
-    { icon: Radar, title: "Control devices remotely", text: "Check device status, adjust supported schedules and manage everyday settings away from home." },
+    { icon: Activity, title: "See daily patterns", text: "Review litter-box visits, meals, water intake and weight changes in one chronological view.", details: ["Compare daily and weekly activity", "Notice changes in weight and routine", "Review connected-device history"] },
+    { icon: Bell, title: "Get useful alerts", text: "Receive maintenance reminders and notifications when a connected device or routine needs attention.", details: ["Know when supplies need attention", "See device and cleaning reminders", "Keep routine changes visible"] },
+    { icon: ScanFace, title: "Follow each cat", text: "Compatible devices separate activity into individual profiles for clearer multi-cat monitoring.", details: ["Create a profile for each cat", "Keep individual weight records apart", "See which cat used a compatible device"] },
+    { icon: Radar, title: "Control devices remotely", text: "Check device status, adjust supported schedules and manage everyday settings away from home.", details: ["Review current device status", "Adjust supported schedules", "Start available device actions remotely"] },
   ];
   return <main id="main-content" className="app-page">
     <section className="app-page-hero">
@@ -575,12 +578,22 @@ function AppPage() {
           <a href="https://play.google.com/store/apps/details?id=com.catlink.app" target="_blank" rel="noreferrer"><b>Get it on</b><strong>Google Play</strong></a>
         </motion.div>
       </motion.div>
-      <motion.div className="app-screen-gallery" initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .8, ease }}>{appScreens.map((screen, index) => <figure className={`app-screen screen-${index + 1}`} key={screen.src}><img src={screen.src} alt={screen.alt} decoding="async" /><figcaption>{["Health alerts", "Health trends", "Usage history", "Care reminders"][index]}</figcaption></figure>)}</motion.div>
+      <motion.div className="app-screen-gallery" initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .8, ease }}>{appScreens.map((screen, index) => <figure className={`app-screen screen-${index + 1}`} key={screen.src}><img src={screen.src} alt={screen.alt} decoding="async" loading={index > 1 ? "lazy" : "eager"} /><figcaption>{screen.label}</figcaption></figure>)}</motion.div>
     </section>
 
     <section className="app-feature-section">
       <Reveal className="app-feature-heading"><p className="kicker">A clearer daily picture</p><h2>Useful information.<br /><span>Without the noise.</span></h2><p>The app turns activity from compatible Catlink devices into a simpler view of what happened, which cat was involved and what may need attention next.</p></Reveal>
-      <div className="app-feature-grid">{appFeatures.map(({ icon: Icon, title, text }, index) => <Reveal className="app-feature-card" key={title} delay={index * .05}><Icon /><span>0{index + 1}</span><h3>{title}</h3><p>{text}</p></Reveal>)}</div>
+      <div className="app-feature-grid">{appFeatures.map(({ icon: Icon, title, text, details }, index) => {
+        const isFlipped = flippedFeature === index;
+        return <Reveal className="app-feature-card-wrap" key={title} delay={index * .05}>
+          <button className={`app-feature-card${isFlipped ? " is-flipped" : ""}`} type="button" aria-pressed={isFlipped} aria-label={`${isFlipped ? "Show summary for" : "Learn more about"} ${title}`} onClick={() => setFlippedFeature(isFlipped ? null : index)}>
+            <span className="app-feature-card-inner">
+              <span className="app-feature-card-face app-feature-card-front"><Icon /><span className="feature-number">0{index + 1}</span><span className="feature-copy"><strong>{title}</strong><span>{text}</span></span><span className="flip-prompt">Tap to learn more <ArrowRight /></span></span>
+              <span className="app-feature-card-face app-feature-card-back"><span className="feature-number">0{index + 1}</span><strong>{title}</strong><ul>{details.map(detail => <li key={detail}>{detail}</li>)}</ul><span className="flip-prompt">Back to summary <ArrowRight /></span></span>
+            </span>
+          </button>
+        </Reveal>;
+      })}</div>
     </section>
 
     <section className="app-connected-section">
